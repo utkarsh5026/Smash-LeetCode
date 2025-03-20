@@ -146,7 +146,7 @@ class PublicIDMixin:
 
         internal_id = Cache.get(cache_key())
         if internal_id:
-            return cls.get_by_internal_id(session, internal_id)
+            return await cls.get_by_internal_id(internal_id)
 
         result = await session.scalar(
             select(cls).where(cls.public_id == public_id)
