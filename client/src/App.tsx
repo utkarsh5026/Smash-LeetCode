@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./components/home/HomePage";
+import Leetcode from "./components/leetcode/Leetcode";
 import { useEffect } from "react";
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
   return (
     <Routes>
       <Route index element={<HomePage />} />
+      <Route path="/leetcode" element={<Leetcode />} />
     </Routes>
   );
 }

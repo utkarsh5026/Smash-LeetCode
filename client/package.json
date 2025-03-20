@@ -22,6 +22,7 @@
     "@radix-ui/react-tooltip": "^1.1.8",
     "@reduxjs/toolkit": "^2.6.1",
     "@tailwindcss/vite": "^4.0.14",
+    "axios": "^1.8.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
@@ -32,6 +33,7 @@
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.4.0",
+    "react-syntax-highlighter": "^15.6.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.14",
     "tw-animate-css": "^1.2.4"
