@@ -1,9 +1,11 @@
+from typing import Literal
 from sqlalchemy import (
     Integer,
     String,
     Float,
     ForeignKey,
-    Index)
+    Index,
+    func)
 from sqlalchemy.orm import (
     relationship,
     joinedload,
@@ -138,6 +140,68 @@ class Problem(Base, PublicIDMixin, TimestampMixin):
         )
         return result.unique().scalars().all()
 
+    @classmethod
+    @with_session
+    async def get_problems_by_filter(
+            cls,
+            session: AsyncSession,
+            tags: list[str] = None,
+            difficulty: list[str] = None,
+            acceptance_sort: Literal['asc', 'desc', 'none'] = 'none',
+            limit: int = 10,
+            page: int = 1):
+        """
+        Retrieves problems filtered by various criteria with pagination support.
+
+        This method allows filtering problems by tags and difficulty levels, sorting
+        by acceptance rate, and paginating the results.
+
+        Args:
+            session (AsyncSession): The database session to use for the query.
+            tags (list[str], optional): List of tag names to filter problems by.
+            difficulty (list[str], optional): List of difficulty levels to filter by.
+            acceptance_sort (Literal['asc', 'desc', 'none'], optional): Sort direction for 
+                acceptance rate or 'none' for no sorting. Defaults to 'none'.
+            limit (int, optional): Maximum number of problems to return per page. Defaults to 10.
+            page (int, optional): Page number to retrieve (1-indexed). Defaults to 1.
+
+        Returns:
+            tuple[list[Problem], int]: A tuple containing:
+                - List of Problem objects for the requested page
+                - Total count of problems matching the filter criteria (before pagination)
+
+        Raises:
+            ValueError: If invalid pagination parameters are provided.
+        """
+        if limit < 1 or page < 1:
+            raise ValueError("Limit and page must be positive integers")
+
+        query = select(Problem).options(joinedload(Problem.tags))
+
+        if tags:
+            query = query.join(Problem.tags).filter(
+                Tag.name.in_(tags)).distinct()
+
+        if difficulty:
+            query = query.filter(Problem.difficulty.in_(difficulty))
+
+        if acceptance_sort != 'none':
+            if acceptance_sort == 'asc':
+                query = query.order_by(Problem.acceptance_rate.asc())
+            else:
+                query = query.order_by(Problem.acceptance_rate.desc())
+
+        count_query = select(func.count()).select_from(query.subquery())
+        total_count_result = await session.execute(count_query)
+        total_count = total_count_result.scalar_one()
+
+        query = query.limit(limit).offset((page - 1) * limit)
+
+        result = await session.execute(query)
+        problems = result.unique().scalars().all()
+
+        return problems, total_count
+
 
 class Tag(Base, PublicIDMixin, TimestampMixin):
     """
@@ -152,6 +216,14 @@ class Tag(Base, PublicIDMixin, TimestampMixin):
     problems: Mapped[list["Problem"]] = relationship(
         'Problem', secondary='problem_tags',
         back_populates='tags')
+
+    @classmethod
+    @with_session
+    async def get_all_tags(cls, session: AsyncSession):
+        """
+        Retrieves all tags from the database.
+        """
+        return await session.execute(select(Tag))
 
 
 class ProblemCodeGenerated(Base, PublicIDMixin, TimestampMixin):
