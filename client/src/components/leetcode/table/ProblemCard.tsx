@@ -28,20 +28,6 @@ const ProblemCard: React.FC<ProblemCardProps> = ({
     navigate(`/leetcode/${parseLeetcodeQuestionName(problem.name)}`);
   };
 
-  // Get appropriate colors based on difficulty
-  const getDifficultyGlow = () => {
-    switch (problem.difficulty) {
-      case "Easy":
-        return "after:bg-green-500/10";
-      case "Medium":
-        return "after:bg-yellow-500/10";
-      case "Hard":
-        return "after:bg-red-500/10";
-      default:
-        return "after:bg-zinc-500/10";
-    }
-  };
-
   const getDifficultyColor = () => {
     switch (problem.difficulty) {
       case "Easy":
@@ -55,27 +41,14 @@ const ProblemCard: React.FC<ProblemCardProps> = ({
     }
   };
 
-  const getDifficultyBorderGlow = () => {
-    switch (problem.difficulty) {
-      case "Easy":
-        return "group-hover:border-green-500/50";
-      case "Medium":
-        return "group-hover:border-yellow-500/50";
-      case "Hard":
-        return "group-hover:border-red-500/50";
-      default:
-        return "group-hover:border-zinc-500/50";
-    }
-  };
-
   return (
     <Card
       onClick={handleClick}
-      className={`relative overflow-hidden  backdrop-blur-sm border 
+      className={`relative overflow-hidden backdrop-blur-sm border 
                    transition-all duration-300 cursor-pointer group hover:shadow-lg min-h-64
-                   hover:border-primary/50 ${getDifficultyBorderGlow()}
                    after:content-[''] after:absolute after:inset-0 after:opacity-0 
-                   after:transition-opacity after:duration-300 group-hover:after:opacity-100 ${getDifficultyGlow()}`}
+                   after:transition-all after:duration-200 group-hover:after:opacity-100 
+                   after:transform after:translate-x-[-100%] `}
     >
       <div className="p-6 flex flex-col h-full justify-between">
         <div className="space-y-4">
@@ -143,19 +116,6 @@ const ProblemCard: React.FC<ProblemCardProps> = ({
             <ChevronRight className="w-4 h-4 ml-1 text-white" />
           </motion.div>
         </div>
-      </div>
-
-      {/* Background subtle glow effect based on difficulty */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <div
-          className={`absolute inset-0 rounded-xl blur-xl opacity-30 ${
-            problem.difficulty === "Easy"
-              ? "bg-green-500/40"
-              : problem.difficulty === "Medium"
-              ? "bg-yellow-500/40"
-              : "bg-red-500/40"
-          }`}
-        ></div>
       </div>
     </Card>
   );
