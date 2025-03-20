@@ -5,11 +5,13 @@ from .models import (
     ProblemCodeGenerated
 )
 from .service import ProblemService
+from .handler import router as problems_router
 
 __all__ = [
     "Problem",
     "Tag",
     "ProblemTags",
     "ProblemCodeGenerated",
-    "ProblemService"
+    "ProblemService",
+    "problems_router"
 ]
