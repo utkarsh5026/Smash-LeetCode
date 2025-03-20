@@ -1,6 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel, Field
-from .models import Problem
+from .models import Problem, Tag
 
 
 class SortOrder(str, Enum):
@@ -38,6 +38,15 @@ class ProblemService:
             limit=filter.limit,
             page=filter.page
         )
+
+    async def get_all_tags(self):
+        """
+        Retrieves all tags from the database.
+
+        Returns:
+            list[Tag]: A list of all tags in the database.
+        """
+        return await Tag.get_all()
 
     async def get_problem_by_public_id(self, problem_id: str):
         """

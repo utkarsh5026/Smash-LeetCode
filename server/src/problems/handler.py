@@ -7,6 +7,11 @@ router = APIRouter(prefix="/leetcode", tags=["leetcode"])
 problems_service = ProblemService()
 
 
+@router.get("/tags")
+async def get_tags():
+    return await problems_service.get_all_tags()
+
+
 @router.get("/problems")
 async def get_problems(
     tags: List[str] = Query(default=[]),
