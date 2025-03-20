@@ -48,7 +48,7 @@ const ProblemCard: React.FC<ProblemCardProps> = ({
                    transition-all duration-300 cursor-pointer group hover:shadow-lg min-h-64
                    after:content-[''] after:absolute after:inset-0 after:opacity-0 
                    after:transition-all after:duration-200 group-hover:after:opacity-100 
-                   after:transform after:translate-x-[-100%] `}
+                   after:transform after:translate-x-[-100%]`}
     >
       <div className="p-6 flex flex-col h-full justify-between">
         <div className="space-y-4">

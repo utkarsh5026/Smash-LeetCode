@@ -2,7 +2,8 @@
 
 A modern, AI-powered platform to help you master coding challenges and ace your technical interviews.
 
-![Smash LeetCode Banner](./images/image.png)
+![Smash LeetCode Banner](./images/home-page.png)
+![Leetcode Problems](./images/problems.png)
 
 ## 🌟 Overview
 

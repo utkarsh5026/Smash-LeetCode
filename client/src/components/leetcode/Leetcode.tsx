@@ -28,8 +28,8 @@ const Leetcode: React.FC = () => {
   return (
     <div>
       <div className="flex items-center justify-center my-4 scrollbar-none">
-        <Button onClick={() => setShowProblems(true)}>Problems</Button>
-        <LeetCodeSearch />
+        {/* <Button onClick={() => setShowProblems(true)}>Problems</Button>
+          <LeetCodeSearch /> */}
       </div>
       {!showProblems && problemName && (
         <ProblemDetail problemName={problemName} />
