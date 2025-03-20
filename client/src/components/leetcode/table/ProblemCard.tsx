@@ -73,15 +73,12 @@ const ProblemCard: React.FC<ProblemCardProps> = ({
     <LayeredCard3D depth={5} gap={3} className="w-full">
       <Card
         onClick={handleClick}
-        className={`relative overflow-hidden bg-zinc-900/70 backdrop-blur-sm border border-zinc-800/70 
+        className={`relative overflow-hidden  backdrop-blur-sm border 
                    transition-all duration-300 cursor-pointer group hover:shadow-lg min-h-64
                    hover:border-primary/50 ${getDifficultyBorderGlow()}
                    after:content-[''] after:absolute after:inset-0 after:opacity-0 
                    after:transition-opacity after:duration-300 group-hover:after:opacity-100 ${getDifficultyGlow()}`}
       >
-        {/* Top gradient based on difficulty */}
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b opacity-40 from-primary/30 to-transparent"></div>
-
         <div className="p-6 flex flex-col h-full justify-between">
           <div className="space-y-4">
             {/* Header section with problem number and difficulty */}
