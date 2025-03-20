@@ -1,10 +1,9 @@
 from typing import Optional
-from pydantic import BaseModel
 from llm.models import get_model
 from langchain_core.prompts import PromptTemplate
 from .db_ops import get_problem_by_id
 from langchain_core.messages import AIMessage
-from pydantic import ValidationError
+from pydantic import ValidationError, BaseModel
 
 
 class SolutionConfig(BaseModel):
