@@ -1,76 +1,176 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Table, Index
-from sqlalchemy.orm import relationship, joinedload
-from db import Base, db_session
+from sqlalchemy import (
+    Integer,
+    String,
+    Float,
+    ForeignKey,
+    Index)
+from sqlalchemy.orm import (
+    relationship,
+    joinedload,
+    Mapped,
+    mapped_column)
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import select
+from db import Base, PublicIDMixin, TimestampMixin, with_session
 
 
-problem_tags = Table(
-    'problem_tags',
-    Base.metadata,
-    Column('problem_id', Integer, ForeignKey('problems.id'), primary_key=True),
-    Column('tag_id', Integer, ForeignKey('tags.id'), primary_key=True)
-)
+class ProblemTags(Base, PublicIDMixin, TimestampMixin):
+    """
+    Represents the association between problems and tags in the database.
+
+    Attributes:
+        problem_id (int): The ID of the problem associated with the tag.
+        tag_id (int): The ID of the tag associated with the problem.
+    """
+    __tablename__ = 'problem_tags'
+    problem_id: Mapped[int] = mapped_column(
+        ForeignKey('problems.id'), primary_key=True)
+    tag_id: Mapped[int] = mapped_column(
+        ForeignKey('tags.id'), primary_key=True)
 
 
-class Problem(Base):
+class Problem(Base, PublicIDMixin, TimestampMixin):
+    """
+    Represents a coding problem in the database.
+
+    Attributes:
+        name (str): The name of the problem.
+        difficulty (str): The difficulty level of the problem (e.g., Easy, Medium, Hard).
+        acceptance_rate (float): The acceptance rate of the problem.
+        description (str): A detailed description of the problem.
+        tags (list[Tag]): A list of tags associated with the problem.
+        code_generated (list[ProblemCodeGenerated]): A list of generated code solutions for the problem.
+    """
     __tablename__ = 'problems'
     __table_args__ = (
         Index('ix_problems_name', 'name'),
     )
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    difficulty = Column(String, nullable=False)
-    acceptance_rate = Column(Float, nullable=False)
-    description = Column(String, nullable=False)
-    tags = relationship('Tag', secondary='problem_tags',
-                        back_populates='problems')
-    code_generated = relationship(
+
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    difficulty: Mapped[str] = mapped_column(String, nullable=False)
+    acceptance_rate: Mapped[float] = mapped_column(Float, nullable=False)
+    description: Mapped[str] = mapped_column(String, nullable=False)
+
+    tags: Mapped[list["Tag"]] = relationship(
+        'Tag', secondary='problem_tags',
+        back_populates='problems')
+    code_generated: Mapped[list["ProblemCodeGenerated"]] = relationship(
         'ProblemCodeGenerated', back_populates='problem')
 
+    @classmethod
+    @with_session
+    async def get_all_problems(cls, session: AsyncSession):
+        """
+        Retrieves all problems from the database, including their associated tags.
 
-class Tag(Base):
-    __tablename__ = 'tags'
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    problems = relationship('Problem', secondary='problem_tags',
-                            back_populates='tags')
+        Args:
+            session (AsyncSession): The database session to use for the query.
 
-
-class ProblemCodeGenerated(Base):
-    __tablename__ = 'problem_code_generated'
-    id = Column(Integer, primary_key=True, index=True)
-    solution = Column(String, nullable=False)
-    model = Column(String, nullable=False)
-    language = Column(String, nullable=False)
-    problem_id = Column(Integer, ForeignKey('problems.id'))
-    problem = relationship('Problem', back_populates='code_generated')
-
-
-def get_all_problems():
-    with db_session() as session:
-        problems = session.query(Problem).options(
-            joinedload(Problem.tags)
-        ).all()
+        Returns:
+            list[Problem]: A list of all problems with their associated tags.
+        """
+        result = await session.execute(
+            select(Problem).options(joinedload(Problem.tags))
+        )
+        problems = result.unique().scalars().all()
         for problem in problems:
             _ = [tag.name for tag in problem.tags]
         return problems
 
+    @classmethod
+    @with_session
+    async def find_problem_by_name(cls, session: AsyncSession, name: str):
+        """
+        Finds a problem by its name.
 
-def find_problem_by_name(name: str):
-    with db_session() as session:
-        return session.query(Problem).filter(Problem.name == name).options(
-            joinedload(Problem.tags)
-        ).first()
+        Args:
+            session (AsyncSession): The database session to use for the query.
+            name (str): The name of the problem to search for.
+
+        Returns:
+            Problem | None: The problem if found, otherwise None.
+        """
+        result = await session.execute(
+            select(Problem).filter(Problem.name == name).options(
+                joinedload(Problem.tags)
+            )
+        )
+        return result.unique().scalar_one_or_none()
+
+    @classmethod
+    @with_session
+    async def search_problems_with_name(cls, session: AsyncSession, name: str, limit: int = 10):
+        """
+        Searches for problems that contain the specified name.
+
+        Args:
+            session (AsyncSession): The database session to use for the query.
+            name (str): The name to search for within problem names.
+            limit (int): The maximum number of problems to return.
+
+        Returns:
+            list[Problem]: A list of problems that match the search criteria.
+        """
+        result = await session.execute(
+            select(Problem).filter(Problem.name.like(f"%{name}%")).options(
+                joinedload(Problem.tags)
+            ).limit(limit)
+        )
+        return result.unique().scalars().all()
+
+    @classmethod
+    @with_session
+    async def get_problems_by_tags(cls, session: AsyncSession, tags: list[str]):
+        """
+        Retrieves problems that are associated with the specified tags.
+
+        Args:
+            session (AsyncSession): The database session to use for the query.
+            tags (list[str]): A list of tag names to filter problems by.
+
+        Returns:
+            list[Problem]: A list of problems associated with the specified tags.
+        """
+        result = await session.execute(
+            select(Problem).join(Problem.tags).filter(Tag.name.in_(tags)).options(
+                joinedload(Problem.tags)
+            )
+        )
+        return result.unique().scalars().all()
 
 
-def search_problems_with_name(name: str, limit: int = 10):
-    with db_session() as session:
-        return session.query(Problem).filter(Problem.name.like(f"%{name}%")).options(
-            joinedload(Problem.tags)
-        ).limit(limit).all()
+class Tag(Base, PublicIDMixin, TimestampMixin):
+    """
+    Represents a tag that can be associated with multiple problems.
+
+    Attributes:
+        name (str): The name of the tag.
+        problems (list[Problem]): A list of problems associated with the tag.
+    """
+    __tablename__ = 'tags'
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    problems: Mapped[list["Problem"]] = relationship(
+        'Problem', secondary='problem_tags',
+        back_populates='tags')
 
 
-def get_problems_by_tags(tags: list[str]):
-    with db_session() as session:
-        return session.query(Problem).filter(Problem.tags.in_(tags)).options(
-            joinedload(Problem.tags)
-        ).all()
+class ProblemCodeGenerated(Base, PublicIDMixin, TimestampMixin):
+    """
+    Represents a generated code solution for a problem.
+
+    Attributes:
+        solution (str): The generated code solution.
+        model (str): The model used to generate the solution.
+        language (str): The programming language of the generated solution.
+        problem_id (int): The ID of the problem associated with this generated code.
+        problem (Problem): The problem associated with this generated code.
+    """
+    __tablename__ = 'problem_code_generated'
+
+    solution: Mapped[str] = mapped_column(String, nullable=False)
+    model: Mapped[str] = mapped_column(String, nullable=False)
+    language: Mapped[str] = mapped_column(String, nullable=False)
+
+    problem_id: Mapped[int] = mapped_column(Integer, ForeignKey('problems.id'))
+    problem: Mapped["Problem"] = relationship(
+        'Problem', back_populates='code_generated')
