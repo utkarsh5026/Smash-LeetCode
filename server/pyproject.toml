@@ -7,6 +7,11 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+sqlalchemy = "^2.0.39"
+loguru = "^0.7.3"
+cachetools = "^5.5.2"
+langchain = "^0.3.21"
+fastapi = "^0.115.11"
 
 
 [build-system]
