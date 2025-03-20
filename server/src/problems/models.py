@@ -16,7 +16,7 @@ from sqlalchemy.sql import select
 from db import Base, PublicIDMixin, TimestampMixin, with_session
 
 
-class ProblemTags(Base, PublicIDMixin, TimestampMixin):
+class ProblemTags(Base, TimestampMixin):
     """
     Represents the association between problems and tags in the database.
 
@@ -52,6 +52,7 @@ class Problem(Base, PublicIDMixin, TimestampMixin):
     difficulty: Mapped[str] = mapped_column(String, nullable=False)
     acceptance_rate: Mapped[float] = mapped_column(Float, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=False)
+    link: Mapped[str] = mapped_column(String, nullable=False)
 
     tags: Mapped[list["Tag"]] = relationship(
         'Tag', secondary='problem_tags',
@@ -60,7 +61,7 @@ class Problem(Base, PublicIDMixin, TimestampMixin):
         'ProblemCodeGenerated', back_populates='problem')
 
     @classmethod
-    @with_session
+    @with_session()
     async def get_all_problems(cls, session: AsyncSession):
         """
         Retrieves all problems from the database, including their associated tags.
@@ -80,7 +81,7 @@ class Problem(Base, PublicIDMixin, TimestampMixin):
         return problems
 
     @classmethod
-    @with_session
+    @with_session()
     async def find_problem_by_name(cls, session: AsyncSession, name: str):
         """
         Finds a problem by its name.
@@ -100,7 +101,7 @@ class Problem(Base, PublicIDMixin, TimestampMixin):
         return result.unique().scalar_one_or_none()
 
     @classmethod
-    @with_session
+    @with_session()
     async def search_problems_with_name(cls, session: AsyncSession, name: str, limit: int = 10):
         """
         Searches for problems that contain the specified name.
@@ -121,7 +122,7 @@ class Problem(Base, PublicIDMixin, TimestampMixin):
         return result.unique().scalars().all()
 
     @classmethod
-    @with_session
+    @with_session()
     async def get_problems_by_tags(cls, session: AsyncSession, tags: list[str]):
         """
         Retrieves problems that are associated with the specified tags.
@@ -141,7 +142,7 @@ class Problem(Base, PublicIDMixin, TimestampMixin):
         return result.unique().scalars().all()
 
     @classmethod
-    @with_session
+    @with_session()
     async def get_problems_by_filter(
             cls,
             session: AsyncSession,
@@ -218,7 +219,7 @@ class Tag(Base, PublicIDMixin, TimestampMixin):
         back_populates='tags')
 
     @classmethod
-    @with_session
+    @with_session()
     async def get_all_tags(cls, session: AsyncSession):
         """
         Retrieves all tags from the database.
