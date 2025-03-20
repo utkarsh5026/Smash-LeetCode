@@ -5,81 +5,29 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(0.18 0.02 80);
-  --foreground: oklch(0.9 0.03 80);
-  --card: oklch(0.22 0.02 80);
-  --card-foreground: oklch(0.9 0.03 80);
-  --popover: oklch(0.22 0.02 80);
-  --popover-foreground: oklch(0.9 0.03 80);
-  --primary: oklch(0.7 0.2 90); /* Green */
-  --primary-foreground: oklch(0.18 0.02 80);
-  --secondary: oklch(0.25 0.02 80);
-  --secondary-foreground: oklch(0.9 0.03 80);
-  --muted: oklch(0.25 0.02 80);
-  --muted-foreground: oklch(0.7 0.02 80);
-  --accent: oklch(0.7 0.25 50); /* Orange */
-  --accent-foreground: oklch(0.18 0.02 80);
-  --destructive: oklch(0.65 0.25 25);
-  --border: oklch(0.3 0.02 80);
-  --input: oklch(0.3 0.02 80);
-  --ring: oklch(0.7 0.2 90);
-  --chart-1: oklch(0.7 0.2 90); /* Green */
-  --chart-2: oklch(0.65 0.25 50); /* Orange */
-  --chart-3: oklch(0.6 0.25 300); /* Pink */
-  --chart-4: oklch(0.65 0.25 200); /* Blue */
-  --chart-5: oklch(0.7 0.25 60); /* Yellow */
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
+:root,
 .dark {
   --radius: 0.625rem;
-    --background: oklch(0.18 0.02 80);
-    --foreground: oklch(0.9 0.03 80);
-    --card: oklch(0.22 0.02 80);
-    --card-foreground: oklch(0.9 0.03 80);
-    --popover: oklch(0.22 0.02 80);
-    --popover-foreground: oklch(0.9 0.03 80);
-    --primary: oklch(0.7 0.2 90);
-    /* Green */
-    --primary-foreground: oklch(0.18 0.02 80);
-    --secondary: oklch(0.25 0.02 80);
-    --secondary-foreground: oklch(0.9 0.03 80);
-    --muted: oklch(0.25 0.02 80);
-    --muted-foreground: oklch(0.7 0.02 80);
-    --accent: oklch(0.7 0.25 50);
-    /* Orange */
-    --accent-foreground: oklch(0.18 0.02 80);
-    --destructive: oklch(0.65 0.25 25);
-    --border: oklch(0.3 0.02 80);
-    --input: oklch(0.3 0.02 80);
-    --ring: oklch(0.7 0.2 90);
-    --chart-1: oklch(0.7 0.2 90);
-    /* Green */
-    --chart-2: oklch(0.65 0.25 50);
-    /* Orange */
-    --chart-3: oklch(0.6 0.25 300);
-    /* Pink */
-    --chart-4: oklch(0.65 0.25 200);
-    /* Blue */
-    --chart-5: oklch(0.7 0.25 60);
-    /* Yellow */
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(0.15 0.03 240);
+  --foreground: oklch(0.9 0.02 240);
+  --card: oklch(0.18 0.03 240);
+  --card-foreground: oklch(0.9 0.02 240);
+  --popover: oklch(0.18 0.03 240);
+  --popover-foreground: oklch(0.9 0.02 240);
+  --ocean-blue: oklch(0.65 0.2 200);
+  --primary: var(--ocean-blue);
+  --primary-foreground: oklch(0.15 0.03 240);
+  --secondary: oklch(0.25 0.05 220);
+  --secondary-foreground: oklch(0.9 0.02 240);
+  --muted: oklch(0.25 0.05 220);
+  --muted-foreground: oklch(0.7 0.02 240);
+  --ocean-teal: oklch(0.6 0.18 180);
+  --accent: var(--ocean-teal);
+  --accent-foreground: oklch(0.15 0.03 240);
+  --destructive: oklch(0.65 0.25 0);
+  --border: oklch(0.25 0.03 240);
+  --input: oklch(0.25 0.03 240);
+  --ring: var(--ocean-blue);
 }
 
 @theme inline {
@@ -130,4 +78,41 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* For Webkit browsers (Chrome, Safari) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: oklch(0.18 0.03 240 / 0.3);
+    border-radius: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 8px;
+    opacity: 0.5;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.7 0.2 200);
+  }
+
+  /* For Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) oklch(0.18 0.03 240 / 0.3);
+  }
+}
+
+/* Hide scrollbars when using the .scrollbar-none class */
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }
