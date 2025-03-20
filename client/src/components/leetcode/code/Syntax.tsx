@@ -1,14 +1,21 @@
 import { vs2015 } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import SyntaxHighlighter from "react-syntax-highlighter";
+import type { SyntaxHighlighterProps } from "react-syntax-highlighter";
 interface SyntaxProps {
   language: string;
   code: string;
   styleAnalysis: {
     suggestions: { line: number; type: string }[];
   };
+  extraProps?: SyntaxHighlighterProps;
 }
 
-const Syntax: React.FC<SyntaxProps> = ({ language, code, styleAnalysis }) => {
+const Syntax: React.FC<SyntaxProps> = ({
+  language,
+  code,
+  styleAnalysis,
+  extraProps,
+}) => {
   return (
     <SyntaxHighlighter
       language={language.toLowerCase()}
@@ -29,6 +36,7 @@ const Syntax: React.FC<SyntaxProps> = ({ language, code, styleAnalysis }) => {
           className: isHighlighted ? "highlighted-line" : undefined,
         };
       }}
+      {...extraProps}
     >
       {code}
     </SyntaxHighlighter>
