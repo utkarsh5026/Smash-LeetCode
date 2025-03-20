@@ -202,11 +202,16 @@ const HomePage: React.FC = () => {
               <Button
                 variant="outline"
                 size="lg"
-                onClick={() => window.open("https://github.com", "_blank")}
-                className="backdrop-blur-sm bg-background/50 border-primary/20 hover:bg-background/80"
+                onClick={() =>
+                  window.open(
+                    "https://github.com/utkarsh5026/Smash-LeetCode",
+                    "_blank"
+                  )
+                }
+                className="backdrop-blur-sm bg-background/50 border-primary/20 hover:bg-background/80 dark:bg-background/50 dark:border-primary/20 dark:hover:bg-background/80 cursor-pointer"
               >
-                <FaGithub className="mr-2 h-4 w-4" />
-                View on GitHub
+                <FaGithub className="mr-2 h-4 w-4 dark:text-white" />
+                <span className="dark:text-white">View on GitHub</span>
               </Button>
             </motion.div>
           </motion.div>
