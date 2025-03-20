@@ -25,6 +25,8 @@ load_dotenv()
 ENVIRONMENT = Environment(os.getenv("ENVIRONMENT", "dev"))
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
+print(ENVIRONMENT, ALLOWED_HOSTS)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -43,7 +45,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if ENVIRONMENT == Environment.DEV else ALLOWED_HOSTS,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

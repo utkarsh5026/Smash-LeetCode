@@ -12,6 +12,13 @@ async def get_tags():
     return await problems_service.get_all_tags()
 
 
+@router.get("/problems/{problem_id}")
+async def get_problem_by_id(problem_id: str):
+    prob = await problems_service.get_problem_by_public_id(problem_id)
+    print(prob)
+    return prob
+
+
 @router.get("/problems")
 async def get_problems(
     tags: List[str] = Query(default=[]),
@@ -31,16 +38,3 @@ async def get_problems(
     )
     problems, total_count = await problems_service.get_problems_by_filter(filter_params)
     return {"problems": problems, "total_count": total_count}
-
-
-@router.get("/problem/{problem_name}")
-async def get_problem(problem_name: str):
-    name = " ".join(problem_name.split("_"))
-    prob = await problems_service.get_problem_by_name(name)
-    return prob
-
-
-@router.get("/problems/{problem_id}")
-async def get_problem_by_id(problem_id: str):
-    prob = await problems_service.get_problem_by_public_id(problem_id)
-    return prob

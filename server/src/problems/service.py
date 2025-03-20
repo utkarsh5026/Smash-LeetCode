@@ -63,6 +63,7 @@ class ProblemService:
             Problem: The problem associated with the given public ID.
         """
         problem = await Problem.get_by_public_id(problem_id)
+        print(problem)
         if problem is None:
             raise ProblemNotFoundError(problem_id)
         return problem
