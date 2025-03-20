@@ -36,8 +36,8 @@ app = FastAPI(
     debug=ENVIRONMENT == "dev",
     lifespan=lifespan,
     version="1.0.0",
-    docs_url=None if ENVIRONMENT == Environment.PROD else "/docs",
-    redoc_url=None if ENVIRONMENT == Environment.PROD else "/redoc"
+    docs_url=None if ENVIRONMENT == "production" else "/docs",
+    redoc_url=None if ENVIRONMENT == "production" else "/redoc"
 )
 
 
