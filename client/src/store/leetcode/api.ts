@@ -1,4 +1,4 @@
-import caller from "../../api/caller";
+import caller from "@/api/caller";
 import type {
   ProblemAdvanced,
   SolutionRequest,

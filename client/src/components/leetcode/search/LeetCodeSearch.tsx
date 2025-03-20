@@ -51,7 +51,7 @@ const LeetCodeSearch: React.FC = () => {
 
   useEffect(() => {
     fetchTags().then((tags) => {
-      setAvailableTags(tags);
+      setAvailableTags(tags.map((tag) => tag.name));
     });
   }, []);
 

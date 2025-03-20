@@ -224,7 +224,8 @@ class Tag(Base, PublicIDMixin, TimestampMixin):
         """
         Retrieves all tags from the database.
         """
-        return await session.execute(select(Tag))
+        result = await session.execute(select(Tag))
+        return result.scalars().all()
 
 
 class ProblemCodeGenerated(Base, PublicIDMixin, TimestampMixin):

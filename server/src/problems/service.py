@@ -46,7 +46,8 @@ class ProblemService:
         Returns:
             list[Tag]: A list of all tags in the database.
         """
-        return await Tag.get_all()
+        tags = await Tag.get_all_tags()
+        return tags
 
     async def get_problem_by_public_id(self, problem_id: str):
         """
