@@ -1,7 +1,7 @@
 from typing import Optional
 from llm.models import get_model
 from langchain_core.prompts import PromptTemplate
-from .db_ops import get_problem_by_id
+from problems import Problem
 from langchain_core.messages import AIMessage
 from pydantic import ValidationError, BaseModel
 
@@ -50,7 +50,7 @@ async def generate_code_solution(config: SolutionConfig):
     Raises:
         ValueError: If the problem with the specified ID is not found or if the response cannot be parsed.
     """
-    problem = get_problem_by_id(config.problem_id)
+    problem = await Problem.get_by_public_id(config.problem_id)
 
     if problem is None:
         raise ValueError(f"Problem with id {config.problem_id} not found")
