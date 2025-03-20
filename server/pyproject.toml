@@ -12,6 +12,8 @@ loguru = "^0.7.3"
 cachetools = "^5.5.2"
 langchain = "^0.3.21"
 fastapi = "^0.115.11"
+langchain-openai = "^0.3.9"
+python-dotenv = "^1.0.1"
 
 
 [build-system]
