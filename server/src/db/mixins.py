@@ -174,6 +174,12 @@ class PublicIDMixin:
             return True
         return False
 
+    @classmethod
+    @with_session()
+    async def get_all(cls, session: AsyncSession):
+        """Get all instances of the model."""
+        return await session.scalars(select(cls))
+
     def to_dict(self, exclude: Optional[set[str]] = None) -> dict:
         """
         Convert model to dictionary, with configurable field exclusion.
