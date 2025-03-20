@@ -81,7 +81,7 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({ problemName }) => {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-b from-background to-background/80 p-6"
+      className="min-h-screen bg-gradient-to-b from-background to-background/80 p-6 font-cascadia-code"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

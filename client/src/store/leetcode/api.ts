@@ -42,8 +42,8 @@ export const fetchInfo = async () => {
   return response.data;
 };
 
-export const fetchProblemInfo = async (problemName: string) => {
-  const response = await caller.get(`/leetcode/problem/${problemName}`);
+export const fetchProblemInfo = async (problemId: string) => {
+  const response = await caller.get(`/leetcode/problems/${problemId}`);
   return response.data as ProblemAdvanced;
 };
 

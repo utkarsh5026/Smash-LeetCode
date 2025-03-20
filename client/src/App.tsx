@@ -10,7 +10,7 @@ function App() {
   return (
     <Routes>
       <Route index element={<HomePage />} />
-      <Route path="/leetcode" element={<Leetcode />} />
+      <Route path="/leetcode/*" element={<Leetcode />} />
     </Routes>
   );
 }

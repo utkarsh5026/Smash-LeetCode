@@ -25,7 +25,7 @@ const ProblemCard: React.FC<ProblemCardProps> = ({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/leetcode/${parseLeetcodeQuestionName(problem.name)}`);
+    navigate(`/leetcode/${problem.public_id}`);
   };
 
   const getDifficultyColor = () => {

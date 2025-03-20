@@ -7,7 +7,6 @@ import useProblems from "@/store/leetcode/hook";
 import { useLocation } from "react-router-dom";
 
 const Leetcode: React.FC = () => {
-  const { fetchInfo } = useProblems();
   const location = useLocation();
 
   const problemName = useMemo(() => {
@@ -15,22 +14,17 @@ const Leetcode: React.FC = () => {
     return parts.length > 2 ? parts[parts.length - 1] : "";
   }, [location.pathname]);
 
+  console.log(problemName);
+
   const [showProblems, setShowProblems] = useState<boolean>(!problemName);
 
   useEffect(() => {
     setShowProblems(!problemName);
   }, [problemName]);
 
-  useEffect(() => {
-    fetchInfo();
-  }, [fetchInfo]);
-
   return (
     <div>
-      <div className="flex items-center justify-center my-4 scrollbar-none">
-        {/* <Button onClick={() => setShowProblems(true)}>Problems</Button>
-          <LeetCodeSearch /> */}
-      </div>
+      <div className="flex items-center justify-center my-4 scrollbar-none"></div>
       {!showProblems && problemName && (
         <ProblemDetail problemName={problemName} />
       )}

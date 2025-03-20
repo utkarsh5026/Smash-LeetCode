@@ -21,6 +21,7 @@ const ProblemBasicSchema = z.object({
       id: z.string(),
     })
   ),
+  public_id: z.string(),
 });
 
 const ProblemAdvancedSchema = ProblemBasicSchema.extend({

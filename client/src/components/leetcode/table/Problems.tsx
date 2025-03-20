@@ -57,10 +57,6 @@ const Problems: React.FC = () => {
     );
   };
 
-  const handleNavigateToProblem = (problem: ProblemBasic) => {
-    navigate(`/leetcode/${parseLeetcodeQuestionName(problem.name)}`);
-  };
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -128,13 +124,7 @@ const Problems: React.FC = () => {
       {/* Problems Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {problemList.problems.map((problem, index) => (
-          <div
-            key={`${problem.name}-${index}`}
-            onClick={() => handleNavigateToProblem(problem)}
-            onMouseEnter={() => setHoveredProblem(problem.name)}
-            onMouseLeave={() => setHoveredProblem(null)}
-            className="cursor-pointer"
-          >
+          <div key={`${problem.name}-${index}`} className="cursor-pointer">
             <ProblemCard
               problem={problem}
               index={index}
