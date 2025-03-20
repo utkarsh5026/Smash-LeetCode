@@ -4,10 +4,12 @@ from .models import (
     ProblemTags,
     ProblemCodeGenerated
 )
+from .service import ProblemService
 
 __all__ = [
     "Problem",
     "Tag",
     "ProblemTags",
-    "ProblemCodeGenerated"
+    "ProblemCodeGenerated",
+    "ProblemService"
 ]
