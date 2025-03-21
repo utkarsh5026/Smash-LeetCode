@@ -61,7 +61,7 @@ const ModelSelect: React.FC<ModelSelectProps> = ({ onModelSelect }) => {
               value={model.name}
               className="flex items-center py-2"
             >
-              <div className="flex flex-col">
+              <div className="flex flex-col font-cascadia-code">
                 <span className="font-medium text-sm text-zinc-300">
                   {model.name}
                 </span>
