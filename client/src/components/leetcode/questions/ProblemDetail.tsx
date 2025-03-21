@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { ExternalLink } from "lucide-react";
 import CodeSegment from "./CodeSegment";
 import { useProblem } from "@/store/leetcode/hook";
@@ -32,23 +33,6 @@ const itemVariants = {
 interface ProblemDetailProps {
   problemName: string;
 }
-
-const sampleChat = [
-  {
-    question: "Hello, how are you?",
-    answer: "I'm fine, thank you!",
-  },
-  {
-    question: "What is the capital of France?",
-    answer: "The capital of France is Paris.",
-    model: models[0],
-  },
-  {
-    question: "What is the capital of France?",
-    answer: "The capital of France is Paris.",
-    model: models[1],
-  },
-];
 
 const ProblemDetail: React.FC<ProblemDetailProps> = ({ problemName }) => {
   const { problemInfo, fetchProblemInfo } = useProblem();
@@ -102,109 +86,148 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({ problemName }) => {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-b from-background to-background/80 p-6 font-cascadia-code"
+      className="min-h-screen bg-gradient-to-b from-background to-background/80 p-4 md:p-6 font-cascadia-code"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      <motion.div
-        variants={itemVariants}
-        className="max-w-8xl mx-auto mb-6 flex items-center justify-between"
-      >
-        <div className="flex items-center gap-4">
-          <h1 className="text-3xl font-bold">{problem.name}</h1>
-          <motion.span
-            className={`px-3 py-1 rounded-full text-sm font-medium ${
-              problem.difficulty === "Easy"
-                ? "bg-green-100 text-green-800"
-                : problem.difficulty === "Medium"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-red-100 text-red-800"
-            }`}
-            whileHover={{ scale: 1.05 }}
-          >
-            {problem.difficulty}
-          </motion.span>
-          <span className="text-sm text-muted-foreground">
-            Acceptance Rate: {problem.acceptance_rate}
-          </span>
-        </div>
-        <motion.div whileHover={{ scale: 1.02 }}>
-          <Button
-            variant="outline"
-            className="bg-primary/10"
-            onClick={() => window.open(problem.link, "_blank")}
-          >
-            <ExternalLink className="w-4 h-4 mr-2" />
-            View Problem
-          </Button>
-        </motion.div>
-      </motion.div>
-
-      {/* Main Content Grid */}
-      <div className="max-w-8xl mx-auto grid grid-cols-2 gap-6">
+      {/* Main Content Grid - Now takes full height */}
+      <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-2rem)]">
         <InteractiveCoach
           selectedModel={selectedModel}
           setSelectedModel={setSelectedModel}
           problemName={problem.name}
           problemDifficulty={problem.difficulty}
-          problemTags={["Array", "Two Pointers", "Sorting"]}
+          problemTags={
+            problem.tags?.map((tag) => tag.name) || [
+              "Array",
+              "Two Pointers",
+              "Sorting",
+            ]
+          }
         />
 
-        <Card className="h-[calc(100vh-12rem)]">
-          <CardContent className="p-4 h-full">
+        <Card className="h-full">
+          <CardContent className="p-0 h-full">
             <Tabs defaultValue="description" className="h-full flex flex-col">
-              <TabsList>
-                <TabsTrigger value="description">
-                  Problem Description
-                </TabsTrigger>
+              <TabsList className="px-4 pt-4 bg-card">
+                <TabsTrigger value="description">Description</TabsTrigger>
                 <TabsTrigger value="solution">Solution</TabsTrigger>
-                <TabsTrigger value="analysis">Code Analysis</TabsTrigger>
+                <TabsTrigger value="analysis">Analysis</TabsTrigger>
                 <TabsTrigger value="visualize">Visualize</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="description" className="flex-1 mt-4">
-                <ScrollArea className="h-[calc(100vh-16rem)]">
-                  <div className="prose dark:prose-invert max-w-none">
-                    {description}
+              <TabsContent
+                value="description"
+                className="flex-1 p-0 m-0 h-full overflow-hidden"
+              >
+                <div className="flex flex-col h-full overflow-hidden">
+                  {/* Problem Header - Now inside the description tab */}
+                  <div className="p-4 bg-zinc-900/70 border-b border-zinc-800">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                      <h1 className="text-2xl md:text-3xl font-bold text-white">
+                        {problem.name}
+                      </h1>
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          className={`${
+                            problem.difficulty === "Easy"
+                              ? "bg-green-500/30 text-green-300 border-green-500/40"
+                              : problem.difficulty === "Medium"
+                              ? "bg-yellow-500/30 text-yellow-300 border-yellow-500/40"
+                              : "bg-red-500/30 text-red-300 border-red-500/40"
+                          } px-3 py-1`}
+                        >
+                          {problem.difficulty}
+                        </Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-primary/10 border-primary/20 hover:bg-primary/20"
+                          onClick={() => window.open(problem.link, "_blank")}
+                        >
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          LeetCode
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center flex-wrap gap-2">
+                      <span className="text-sm text-zinc-300">
+                        Acceptance Rate:{" "}
+                        <span className="text-primary">
+                          {problem.acceptance_rate}%
+                        </span>
+                      </span>
+                      <div className="flex flex-wrap gap-1 ml-2">
+                        {problem.tags?.map((tag, index) => (
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="bg-zinc-800/50 text-zinc-300 border-zinc-700/50 text-xs"
+                          >
+                            {tag.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </ScrollArea>
+
+                  {/* Description Content */}
+                  <ScrollArea className="flex-1 overflow-auto">
+                    <div className="p-4">
+                      <div className="prose dark:prose-invert max-w-none">
+                        {description}
+                      </div>
+                    </div>
+                  </ScrollArea>
+                </div>
               </TabsContent>
 
-              <TabsContent value="solution" className="flex-1 mt-4">
-                <ScrollArea className="h-[calc(100vh-20rem)]">
-                  <CodeSegment />
-                </ScrollArea>
+              <TabsContent
+                value="solution"
+                className="flex-1 p-0 m-0 h-full overflow-hidden"
+              >
+                <CodeSegment />
               </TabsContent>
 
-              <TabsContent value="analysis" className="flex-1 mt-4">
-                <ScrollArea className="h-[calc(100vh-20rem)]">
-                  <CodeQualityAnalyzer
-                    userCode={currentCode}
-                    language={"Python"}
-                    problemName={problem.name}
-                    problemDifficulty={problem.difficulty}
-                    isAnalyzing={isAnalyzing}
-                    onRunAnalysis={() => setIsAnalyzing(false)}
-                  />
-                </ScrollArea>
+              <TabsContent
+                value="analysis"
+                className="flex-1 p-0 m-0 h-full overflow-hidden"
+              >
+                <CodeQualityAnalyzer
+                  userCode={
+                    currentCode ||
+                    "def twoSum(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n    return []"
+                  }
+                  language={"Python"}
+                  problemName={problem.name}
+                  problemDifficulty={problem.difficulty}
+                  isAnalyzing={isAnalyzing}
+                  onRunAnalysis={() => setIsAnalyzing(false)}
+                />
               </TabsContent>
 
-              <TabsContent value="visualize" className="flex-1 mt-4">
-                <ScrollArea className="h-[calc(100vh-20rem)]">
-                  <VisualAlgorithmSimulator
-                    userCode={currentCode}
-                    language={"Python"}
-                    problemName={problem.name}
-                    problemDifficulty={problem.difficulty}
-                    algorithmType={determineAlgorithmType()}
-                    exampleInput={problem.example_input}
-                    optimalSolution={{
-                      code: problem.optimal_solution?.Python?.code || "",
-                      language: "Python",
-                    }}
-                  />
-                </ScrollArea>
+              <TabsContent
+                value="visualize"
+                className="flex-1 p-0 m-0 h-full overflow-hidden"
+              >
+                <VisualAlgorithmSimulator
+                  userCode={
+                    currentCode ||
+                    "def twoSum(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n    return []"
+                  }
+                  language={"Python"}
+                  problemName={problem.name}
+                  problemDifficulty={problem.difficulty}
+                  algorithmType={determineAlgorithmType()}
+                  exampleInput={problem.example_input || [[2, 7, 11, 15], 9]}
+                  optimalSolution={{
+                    code:
+                      problem.optimal_solution?.Python?.code ||
+                      "def twoSum(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n    return []",
+                    language: "Python",
+                  }}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>

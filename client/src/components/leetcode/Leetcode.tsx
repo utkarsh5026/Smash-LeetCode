@@ -1,9 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ProblemDetail from "./questions/ProblemDetail";
-import LeetCodeSearch from "./search/LeetCodeSearch";
-import { Button } from "@/components/ui/button";
 import Problems from "./table/Problems";
-import useProblems from "@/store/leetcode/hook";
 import { useLocation } from "react-router-dom";
 
 const Leetcode: React.FC = () => {
