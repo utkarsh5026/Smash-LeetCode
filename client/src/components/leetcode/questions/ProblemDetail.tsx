@@ -7,8 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ExternalLink } from "lucide-react";
 import CodeSegment from "./CodeSegment";
 import { useProblem } from "@/store/leetcode/hook";
-import ChatInterface from "./ChatInterface";
 import { models, type Model } from "@/config/config";
+import InteractiveCoach from "../coach/Coach";
+import CodeQualityAnalyzer from "../analyzer/CodeAnalyzer";
+import VisualAlgorithmSimulator from "../visualizer/Visualizer";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -53,6 +55,25 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({ problemName }) => {
   const [newQuestion, setNewQuestion] = useState("");
   const [selectedModel, setSelectedModel] = useState<Model>(models[0]);
   const [isTyping, setIsTyping] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [currentCode, setCurrentCode] = useState("");
+
+  const determineAlgorithmType = () => {
+    if (!problemInfo?.problem?.tags) return "array";
+
+    const tags = problemInfo.problem.tags.map((tag) => tag.name.toLowerCase());
+
+    if (tags.includes("linked list")) return "linkedList";
+    if (tags.includes("tree") || tags.includes("binary tree")) return "tree";
+    if (tags.includes("graph")) return "graph";
+    if (tags.includes("hash table") || tags.includes("hashmap"))
+      return "hashMap";
+    if (tags.includes("stack")) return "stack";
+    if (tags.includes("queue")) return "queue";
+    if (tags.includes("heap")) return "heap";
+
+    return "array"; // Default algorithm type
+  };
 
   const handleSendQuestion = async () => {
     if (!newQuestion.trim()) return;
@@ -122,15 +143,12 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({ problemName }) => {
 
       {/* Main Content Grid */}
       <div className="max-w-8xl mx-auto grid grid-cols-2 gap-6">
-        <ChatInterface
+        <InteractiveCoach
           selectedModel={selectedModel}
           setSelectedModel={setSelectedModel}
-          chat={sampleChat}
-          isTyping={isTyping}
-          newQuestion={newQuestion}
-          setNewQuestion={setNewQuestion}
-          handleSendQuestion={handleSendQuestion}
-          itemVariants={itemVariants}
+          problemName={problem.name}
+          problemDifficulty={problem.difficulty}
+          problemTags={["Array", "Two Pointers", "Sorting"]}
         />
 
         <Card className="h-[calc(100vh-12rem)]">
@@ -141,6 +159,8 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({ problemName }) => {
                   Problem Description
                 </TabsTrigger>
                 <TabsTrigger value="solution">Solution</TabsTrigger>
+                <TabsTrigger value="analysis">Code Analysis</TabsTrigger>
+                <TabsTrigger value="visualize">Visualize</TabsTrigger>
               </TabsList>
 
               <TabsContent value="description" className="flex-1 mt-4">
@@ -154,6 +174,36 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({ problemName }) => {
               <TabsContent value="solution" className="flex-1 mt-4">
                 <ScrollArea className="h-[calc(100vh-20rem)]">
                   <CodeSegment />
+                </ScrollArea>
+              </TabsContent>
+
+              <TabsContent value="analysis" className="flex-1 mt-4">
+                <ScrollArea className="h-[calc(100vh-20rem)]">
+                  <CodeQualityAnalyzer
+                    userCode={currentCode}
+                    language={"Python"}
+                    problemName={problem.name}
+                    problemDifficulty={problem.difficulty}
+                    isAnalyzing={isAnalyzing}
+                    onRunAnalysis={() => setIsAnalyzing(false)}
+                  />
+                </ScrollArea>
+              </TabsContent>
+
+              <TabsContent value="visualize" className="flex-1 mt-4">
+                <ScrollArea className="h-[calc(100vh-20rem)]">
+                  <VisualAlgorithmSimulator
+                    userCode={currentCode}
+                    language={"Python"}
+                    problemName={problem.name}
+                    problemDifficulty={problem.difficulty}
+                    algorithmType={determineAlgorithmType()}
+                    exampleInput={problem.example_input}
+                    optimalSolution={{
+                      code: problem.optimal_solution?.Python?.code || "",
+                      language: "Python",
+                    }}
+                  />
                 </ScrollArea>
               </TabsContent>
             </Tabs>
