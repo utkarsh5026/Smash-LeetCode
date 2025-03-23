@@ -21,7 +21,6 @@ const Leetcode: React.FC = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-center my-4 scrollbar-none"></div>
       {!showProblems && problemName && (
         <ProblemDetail problemName={problemName} />
       )}

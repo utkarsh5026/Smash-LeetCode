@@ -1,22 +1,16 @@
+import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import useProblems from "@/store/leetcode/hook";
 
-interface PaginationProps {
+interface SleekPaginationProps {
   currentPage: number;
   goToNextPage: () => void;
   goToPreviousPage: () => void;
   goToPage: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
+const SleekPagination: React.FC<SleekPaginationProps> = ({
   currentPage,
   goToNextPage,
   goToPreviousPage,
@@ -24,52 +18,102 @@ const Pagination: React.FC<PaginationProps> = ({
 }) => {
   const { pageSize, problemCnt, problemList } = useProblems();
 
+  // Generate array of visible page numbers
+  const getPageNumbers = () => {
+    const totalPages = problemList.pageCount;
+    const visiblePages = [];
+
+    // Always show first page
+    if (totalPages >= 1) visiblePages.push(1);
+
+    // Calculate range around current page
+    let rangeStart = Math.max(2, currentPage - 2);
+    let rangeEnd = Math.min(totalPages - 1, currentPage + 2);
+
+    // Add ellipsis after first page if needed
+    if (rangeStart > 2) visiblePages.push("...");
+
+    // Add pages in range
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      visiblePages.push(i);
+    }
+
+    // Add ellipsis before last page if needed
+    if (rangeEnd < totalPages - 1) visiblePages.push("...");
+
+    // Always show last page if it exists and isn't already included
+    if (totalPages > 1) visiblePages.push(totalPages);
+
+    return visiblePages;
+  };
+
+  const pageNumbers = getPageNumbers();
+
   return (
-    <div className="flex items-center justify-between bg-zinc-900/50 backdrop-blur-sm p-4 rounded-xl border border-zinc-800/50">
-      <p className="text-sm text-zinc-400">
-        Showing {(currentPage - 1) * pageSize + 1} to{" "}
-        {Math.min(currentPage * pageSize, problemCnt)} of {problemCnt} problems
-      </p>
+    <div className="bg-card/10 backdrop-blur-md rounded-xl border border-zinc-800/30 shadow-lg overflow-hidden">
+      <div className="flex items-center justify-between px-6 py-4">
+        <p className="text-sm text-zinc-400">
+          Showing{" "}
+          <span className="text-white font-medium">
+            {(currentPage - 1) * pageSize + 1}
+          </span>{" "}
+          to{" "}
+          <span className="text-white font-medium">
+            {Math.min(currentPage * pageSize, problemCnt)}
+          </span>{" "}
+          of <span className="text-white font-medium">{problemCnt}</span>{" "}
+          problems
+        </p>
 
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={goToPreviousPage}
-          disabled={currentPage === 1}
-          className="bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-700"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={goToPreviousPage}
+            disabled={currentPage === 1}
+            className="h-8 w-8 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 disabled:opacity-50"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
 
-        <Select
-          value={currentPage.toString()}
-          onValueChange={(value) => goToPage(parseInt(value))}
-        >
-          <SelectTrigger className="w-[70px] bg-zinc-800/50 border-zinc-700/50">
-            <SelectValue placeholder="Page..." />
-          </SelectTrigger>
-          <SelectContent className="bg-zinc-900 border-zinc-800">
-            {Array.from({ length: problemList.pageCount }, (_, i) => (
-              <SelectItem key={i + 1} value={(i + 1).toString()}>
-                {i + 1}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          {pageNumbers.map((page, index) =>
+            page === "..." ? (
+              <span
+                key={`ellipsis-${index}`}
+                className="w-8 text-center text-zinc-500"
+              >
+                ...
+              </span>
+            ) : (
+              <Button
+                key={`page-${page}`}
+                variant={currentPage === page ? "default" : "ghost"}
+                size="sm"
+                onClick={() => typeof page === "number" && goToPage(page)}
+                className={`h-8 w-8 p-0 rounded-md ${
+                  currentPage === page
+                    ? "bg-primary text-primary-foreground"
+                    : "text-zinc-300 hover:bg-zinc-800/60 hover:text-white"
+                }`}
+              >
+                {page}
+              </Button>
+            )
+          )}
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={goToNextPage}
-          disabled={currentPage === problemList.pageCount}
-          className="bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-700"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={goToNextPage}
+            disabled={currentPage === problemList.pageCount}
+            className="h-8 w-8 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 disabled:opacity-50"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Pagination;
+export default SleekPagination;
